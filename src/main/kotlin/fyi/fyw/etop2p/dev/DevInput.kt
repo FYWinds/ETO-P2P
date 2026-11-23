@@ -5,6 +5,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import fyi.fyw.etop2p.EtoP2P
 import fyi.fyw.etop2p.client.ClientState
+import fyi.fyw.etop2p.client.Highlights
 import fyi.fyw.etop2p.client.ScreenState
 import java.io.File
 import java.nio.ByteBuffer
@@ -155,6 +156,7 @@ object DevInput {
             appendLine("display ${mc.displayWidth} ${mc.displayHeight} scale ${resolution.scaleFactor} gui ${resolution.scaledWidth} ${resolution.scaledHeight}")
             appendLine("screen ${mc.currentScreen?.javaClass?.name}")
             appendLine("tunnels ${ClientState.entries.size} undo ${ClientState.undo} notice ${ClientState.notice?.key}")
+            appendLine("highlights ${Highlights.active}")
             if (screen != null) {
                 appendLine("view ${screen.view} sort ${screen.sort} filter ${screen.filter}")
                 appendLine("shown ${screen.shown.size} groups ${screen.groups.size} collapsed ${screen.collapsed}")

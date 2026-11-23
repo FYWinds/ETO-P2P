@@ -16,13 +16,18 @@ import org.lwjgl.opengl.GL11
 /**
  * Tunnels pointed out in the world: an outline seen through walls, a line from an input to each of its outputs,
  * and for the one asked for an arrow with its distance at the top of the screen. Only tunnels of the player's
- * dimension are drawn. It ends by itself after a while or when asked for again.
+ * dimension are drawn. It ends once the player has stood by the one asked for a moment, after [LASTS_MS] at the
+ * latest, and when the card's screen opens again or the card is used on air while sneaking.
  */
 object Highlights {
 
     class Mark(val key: P2PKey, val color: Int, val title: String)
 
-    private const val LASTS_MS = 90_000L
+    private const val LASTS_MS = 30_000L
+
+    /** Within this many blocks of the tunnel asked for the player has found it; the marks stay [FOUND_MS] more. */
+    private const val FOUND_WITHIN = 3.0
+    private const val FOUND_MS = 3_000L
 
     private var marks: List<Mark> = emptyList()
     private var lines: List<Pair<P2PKey, P2PKey>> = emptyList()
@@ -31,12 +36,8 @@ object Highlights {
 
     val active: Boolean get() = marks.isNotEmpty() && System.currentTimeMillis() < until
 
-    /** Points [marks] out, with [lines] between them; the arrow goes to [target]. The same target again ends it. */
+    /** Points [marks] out, with [lines] between them; the arrow goes to [target]. */
     fun show(marks: List<Mark>, lines: List<Pair<P2PKey, P2PKey>>, target: Mark?) {
-        if (active && target != null && this.target?.key == target.key) {
-            clear()
-            return
-        }
         this.marks = marks
         this.lines = lines
         this.target = target
@@ -65,6 +66,14 @@ object Highlights {
         val vx = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * t
         val vy = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * t
         val vz = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * t
+
+        // Standing by the tunnel asked for cuts the time left down to a moment; walking off again does not give it back.
+        target?.key?.takeIf { it.dim == dim }?.let(::centre)?.let { c ->
+            val dx = c[0] - vx
+            val dy = c[1] - vy
+            val dz = c[2] - vz
+            if (dx * dx + dy * dy + dz * dz <= FOUND_WITHIN * FOUND_WITHIN) until = minOf(until, System.currentTimeMillis() + FOUND_MS)
+        }
 
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT or GL11.GL_LINE_BIT or GL11.GL_CURRENT_BIT)
         GL11.glPushMatrix()

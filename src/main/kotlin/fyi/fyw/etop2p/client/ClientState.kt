@@ -46,6 +46,8 @@ object ClientState : Net.ClientSink {
         notice = null
         live = true
         revision++
+        // Back at the list, the pointing out of last time has done its work.
+        Highlights.clear()
         // Taken note of first: opening it closes the screen it replaces.
         ClientGUI.open(P2PScreen.create().also { screen = it })
     }

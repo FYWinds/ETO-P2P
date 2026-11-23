@@ -25,12 +25,16 @@ import net.minecraft.world.World
 /**
  * The card. Used on a network it opens the screen of that network's tunnels; used on air, the network it was last
  * used on. Without the screen: sneaking and using it on a tunnel picks that tunnel as the input, and using it on
- * other tunnels then binds each as an output of it; sneaking and using it on air lets the input go.
+ * other tunnels then binds each as an output of it; sneaking and using it on air lets the input go, and whatever
+ * the client still points out in the world.
  */
 object P2PCardItem : Item() {
 
     private const val NETWORK = "net"
     private const val ARMED = "armed"
+
+    /** What a client does when the card is used on air while sneaking; the client sets it. */
+    var onLetGo: () -> Unit = {}
 
     init {
         maxStackSize = 1
@@ -84,7 +88,11 @@ object P2PCardItem : Item() {
     ): Boolean = world.isRemote && world.getTileEntity(x, y, z) is IGridHost
 
     override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
-        if (world.isRemote || player !is EntityPlayerMP) return stack
+        if (world.isRemote) {
+            if (player.isSneaking) onLetGo()
+            return stack
+        }
+        if (player !is EntityPlayerMP) return stack
         if (player.isSneaking) {
             if (read(stack, ARMED) != null) {
                 stack.tagCompound?.removeTag(ARMED)

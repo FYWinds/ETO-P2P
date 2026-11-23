@@ -2,6 +2,7 @@ package fyi.fyw.etop2p.client
 
 import fyi.fyw.etop2p.dev.DevCommand
 import fyi.fyw.etop2p.dev.DevInput
+import fyi.fyw.etop2p.item.P2PCardItem
 import fyi.fyw.etop2p.net.Net
 import net.minecraftforge.common.MinecraftForge
 
@@ -10,6 +11,7 @@ object ClientSetup {
     fun register() {
         Net.client = ClientState
         MinecraftForge.EVENT_BUS.register(Highlights)
+        P2PCardItem.onLetGo = Highlights::clear
         if (DevCommand.enabled) DevInput.register()
     }
 }

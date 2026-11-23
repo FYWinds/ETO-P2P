@@ -26,9 +26,11 @@ A card for Applied Energistics 2 on GT New Horizons. It lists every P2P tunnel o
 | Use it on air | Opens the last network |
 | Sneak-use on a tunnel | Picks it as the input |
 | Use on another tunnel | Binds it as an output of the picked input |
-| Sneak-use on air | Clears the picked input |
+| Sneak-use on air | Clears the picked input and the locate highlight |
 
 On the screen: Ctrl-click adds to the selection, Shift-click selects a run, dragging on empty room draws a box. F2 renames, Del unbinds, Ctrl+Z undoes.
+
+Locate ends 3 seconds after you get within 3 blocks of the tunnel, after 30 seconds at the latest, and when the screen opens again.
 
 The card is crafted from BetterP2P's advanced memory card, and back.
 
