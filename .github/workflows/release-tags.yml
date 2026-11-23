@@ -1,0 +1,36 @@
+name: Release tagged build
+
+on:
+  push:
+    tags: [ '*' ]
+
+permissions:
+  contents: write
+
+jobs:
+  # Builds the tag and makes the GitHub release with the jars.
+  release-tags:
+    uses: GTNewHorizons/GTNH-Actions-Workflows/.github/workflows/release-tags.yml@master
+    secrets: inherit
+
+  # That release's notes only link to the commits; these are written from them (cliff.toml).
+  changelog:
+    needs: release-tags
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Write the notes from the commits since the tag before
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --current
+        env:
+          OUTPUT: notes.md
+
+      - name: Put them on the release
+        run: gh release edit "$GITHUB_REF_NAME" --notes-file notes.md
+        env:
+          GH_TOKEN: ${{ github.token }}

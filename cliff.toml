@@ -1,0 +1,26 @@
+# Release notes from the commit subjects (Conventional Commits) between two tags.
+# .github/workflows/release-tags.yml runs git-cliff with this for every pushed tag.
+# What a player notices is listed: feat, fix, perf. Everything else stays out.
+
+[changelog]
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim }}
+{% for commit in commits %}
+- {{ commit.message | split(pat="\n") | first | upper_first }} ({{ commit.id | truncate(length=7, end="") }})\
+{% endfor %}
+
+{% endfor %}
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+# The comments order the groups; striptags takes them out of the headings.
+commit_parsers = [
+    { message = "^feat", group = "<!-- 0 -->Added" },
+    { message = "^fix", group = "<!-- 1 -->Fixed" },
+    { message = "^perf", group = "<!-- 2 -->Faster" },
+    { message = ".*", skip = true },
+]
