@@ -53,7 +53,8 @@ internal class P2POps(private val player: EntityPlayer, private val grid: IGrid)
                 val chosen = now(op.key)?.takeIf { it.output && it.frequency != 0L } ?: return emptyList()
                 connection(chosen).map { it.copy(output = it.key != chosen.key) }
             }
-            is Op.Unbind -> op.keys.distinct().mapNotNull(::now).map { it.copy(frequency = 0L, output = false) }
+            // The name was the connection's; a tunnel that left it does not go on carrying it.
+            is Op.Unbind -> op.keys.distinct().mapNotNull(::now).map { it.copy(frequency = 0L, output = false, name = "") }
             is Op.Convert -> {
                 if (P2PTypes.stack(op.type) == null) return emptyList()
                 op.keys.mapNotNull(::now).flatMap(::connection).distinctBy { it.key }.map { it.copy(type = op.type) }

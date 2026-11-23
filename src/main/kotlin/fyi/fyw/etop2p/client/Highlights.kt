@@ -1,6 +1,7 @@
 package fyi.fyw.etop2p.client
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import fyi.fyw.etolib.ui.UiText.tr
 import fyi.fyw.etop2p.data.P2PKey
 import kotlin.math.atan2
 import kotlin.math.sqrt
@@ -152,13 +153,14 @@ object Highlights {
         val bearing = Math.toDegrees(atan2(-dx, dz)) - player.rotationYaw
         val font = mc.fontRenderer
         val resolution = ScaledResolution(mc, mc.displayWidth, mc.displayHeight)
-        val text = "${mark.title}  ${distance.toInt()} m" + if (dy > 2) " ↑" else if (dy < -2) " ↓" else ""
+        val text = "${mark.title}  ${tr("etop2p.metres", distance.toInt())}" + if (dy > 2) " ↑" else if (dy < -2) " ↓" else ""
         val width = font.getStringWidth(text) + 16
         val left = (resolution.scaledWidth - width) / 2
         val top = 6
 
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT or GL11.GL_CURRENT_BIT)
         GL11.glDisable(GL11.GL_TEXTURE_2D)
+        GL11.glDisable(GL11.GL_CULL_FACE)
         GL11.glEnable(GL11.GL_BLEND)
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
         GL11.glPushMatrix()

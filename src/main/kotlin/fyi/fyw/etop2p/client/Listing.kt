@@ -30,10 +30,9 @@ data class Filter(
     val favorites: Boolean = false,
 )
 
-/** A connection: the tunnels of one frequency. [frequency] 0 holds the unbound tunnels of one type. */
+/** A connection: the tunnels of one frequency. [frequency] 0 holds every unbound tunnel, whatever its type. */
 class Group(
     val frequency: Long,
-    val type: Int,
     val input: P2PEntry?,
     val outputs: List<P2PEntry>,
     val meta: LinkMeta,
@@ -84,7 +83,10 @@ object Listing {
         }
         return entries.filter { entry ->
             if (filter.types.isNotEmpty() && entry.type !in filter.types) return@filter false
-            if (!output.allows(entry.output) || !bound.allows(entry.frequency != 0L)) return@filter false
+            // An unbound tunnel is neither an input nor an output.
+            val isBound = entry.frequency != 0L
+            if (output != Tri.ANY && !(isBound && output.allows(entry.output))) return@filter false
+            if (!bound.allows(isBound)) return@filter false
             if (!filter.online.allows(entry.online)) return@filter false
             val meta = links[entry.frequency]
             if (filter.favorites && meta?.favorite != true) return@filter false
@@ -114,7 +116,7 @@ object Listing {
 
     /**
      * The shown tunnels as connections: favourites first, then the bound ones in the order of their first tunnel
-     * (so the sort carries over), then the unbound ones by type. A connection is listed whole when any tunnel of it
+     * (so the sort carries over), then the unbound ones together. A connection is listed whole when any tunnel of it
      * is shown, so narrowing to one output still shows what it belongs to; [all] is every tunnel of the network.
      */
     fun groups(shown: List<P2PEntry>, all: Collection<P2PEntry>, links: Map<Long, LinkMeta>, whole: Boolean): List<Group> {
@@ -122,12 +124,10 @@ object Listing {
         val bound = shown.filter { it.frequency != 0L }.map { it.frequency }.distinct().map { frequency ->
             val members = byFrequency.getValue(frequency)
             val input = members.firstOrNull { !it.output }
-            Group(frequency, (input ?: members.first()).type, input, members.filter { it.output }, links[frequency] ?: LinkMeta())
+            Group(frequency, input, members.filter { it.output }, links[frequency] ?: LinkMeta())
         }
-        val unbound = shown.filter { it.frequency == 0L }.groupBy { it.type }.map { (type, members) ->
-            Group(0L, type, null, members, LinkMeta())
-        }
-        return bound.sortedByDescending { it.meta.favorite } + unbound
+        val unbound = shown.filter { it.frequency == 0L }
+        return bound.sortedByDescending { it.meta.favorite } + listOfNotNull(unbound.takeIf { it.isNotEmpty() }?.let { Group(0L, null, it, LinkMeta()) })
     }
 
     /**

@@ -34,6 +34,9 @@ object ClientState : Net.ClientSink {
     var live = false
         private set
 
+    /** The screen showing this network. One opened over it takes its place before it closes, so it tells the server nothing. */
+    var screen: P2PScreen? = null
+
     override fun open(message: Net.Open) {
         entries.clear()
         message.entries.forEach { entries[it.key] = it }
@@ -43,7 +46,8 @@ object ClientState : Net.ClientSink {
         notice = null
         live = true
         revision++
-        ClientGUI.open(P2PScreen.create())
+        // Taken note of first: opening it closes the screen it replaces.
+        ClientGUI.open(P2PScreen.create().also { screen = it })
     }
 
     override fun update(message: Net.Update) {

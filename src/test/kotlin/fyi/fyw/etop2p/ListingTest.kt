@@ -49,7 +49,7 @@ class ListingTest {
     @Test
     fun `tags narrow like the buttons`() {
         assertThat(shown(Filter(text = "@out"))).containsExactly(2, 3)
-        assertThat(shown(Filter(text = "@in @b"))).containsExactly(1, 4)
+        assertThat(shown(Filter(text = "@in"))).containsExactly(1, 4)
         assertThat(shown(Filter(text = "@u"))).containsExactly(5)
         assertThat(shown(Filter(text = "@type=fluid"))).containsExactly(4)
         assertThat(shown(Filter(output = Tri.YES, online = Tri.NO))).containsExactly(3)

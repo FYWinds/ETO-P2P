@@ -29,6 +29,8 @@ import net.minecraftforge.common.util.ForgeDirection
  *     etop2p_dev rename|label <player> <text> <tunnel>...
  *     etop2p_dev tag <player> <color> <favorite 0|1> <note> <tunnel>...
  *     etop2p_dev undo <player>
+ *     etop2p_dev look <player> <yaw> <pitch>                    turns the player's head, to aim a click
+ *     etop2p_dev sneak <player> <0|1>                           as the server sees it, until the client says otherwise
  */
 object DevCommand : CommandBase() {
 
@@ -81,6 +83,10 @@ object DevCommand : CommandBase() {
                 Sessions.handle(player, Op.Meta(frequencies, args[2].toInt(), args[3] == "1", args[4]))
             }
             "undo" -> Sessions.handle(player, Op.Undo)
+            "look" -> player.playerNetServerHandler.setPlayerLocation(
+                player.posX, player.posY, player.posZ, args[2].toFloat(), args[3].toFloat(),
+            )
+            "sneak" -> player.isSneaking = args[2] == "1"
             else -> throw WrongUsageException(getCommandUsage(sender))
         }
     }
