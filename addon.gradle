@@ -1,0 +1,27 @@
+apply plugin: 'org.jetbrains.kotlin.jvm'
+
+// The Java tasks target 17 (enableModernJavaSyntax = modern, forceToolchainVersion = 17); Kotlin defaults to 1.8.
+['compileKotlin', 'compileTestKotlin'].each { name ->
+    tasks.named(name).configure {
+        compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
+afterEvaluate {
+    // RFG doesn't configure useJUnitPlatform(); without it Gradle uses the JUnit 4
+    // runner and can't discover JUnit 5 tests. Gradle 9 then fails with
+    // failOnNoDiscoveredTests. Configure it explicitly here.
+    tasks.named('test').configure {
+        useJUnitPlatform()
+        // The classes are Java 17 bytecode; RFG would run the tests on the Java 8 launcher.
+        javaLauncher = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(17)
+            vendor = JvmVendorSpec.AZUL
+        }
+    }
+}
+
+// -PnoKit leaves the interface kit out of the compilation, for building while it is being rewritten.
+if (project.hasProperty('noKit')) {
+    sourceSets.main.kotlin.exclude('fyi/fyw/etolib/**')
+}

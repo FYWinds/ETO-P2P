@@ -1,0 +1,22 @@
+[
+  {
+    "modid": "${modId}",
+    "name": "${modName}",
+    "description": "A card that lists every P2P tunnel of an ME network and binds, renames and converts them from one screen.",
+    "version": "${modVersion}",
+    "mcversion": "${minecraftVersion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "FYWinds"
+    ],
+    "credits": "Interface kit after GTNH Planner by Sbancuz (MIT).",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": [
+      "forgelin",
+      "appliedenergistics2",
+      "modularui2"
+    ]
+  }
+]

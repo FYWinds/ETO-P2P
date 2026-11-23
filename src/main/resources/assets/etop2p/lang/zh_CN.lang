@@ -1,0 +1,23 @@
+item.etop2p.card.name=P2P 管理卡
+
+etop2p.tooltip.armed=已选输入：%d, %d, %d
+etop2p.tooltip.network=网络：%d, %d, %d（维度 %d）
+etop2p.tooltip.use=对着网络右键列出全部 P2P；对空气右键打开上次的网络
+etop2p.tooltip.quick=潜行右键一个 P2P 选为输入，再右键别的 P2P 绑成它的输出
+
+etop2p.quick.armed=已选 %s, %s, %s 为输入。拿卡右键别的 P2P 就绑成它的输出。
+etop2p.quick.bound=已把 %s, %s, %s 绑成输出。
+etop2p.quick.failed=绑不上：选中的输入不在这个网络里，或者这个 P2P 换不成它的类型。
+etop2p.quick.cleared=已清除选中的输入。
+
+etop2p.notice.denied=这个网络的安全终端没有给你建造权限。
+etop2p.notice.no_network=这张卡还没对着网络用过。
+etop2p.notice.unloaded=%s, %s, %s 处的网络没有加载。
+etop2p.notice.gone=网络不在了。
+etop2p.notice.nothing=没有可做的。
+etop2p.notice.done=完成：%s 个 P2P。
+etop2p.notice.partly=%s 个完成，%s 个改不了。
+etop2p.notice.labelled=已给 %s 个 P2P 写标签。
+etop2p.notice.tagged=已标记 %s 条连接。
+etop2p.notice.undone=已撤销。
+etop2p.notice.undo_stale=撤销不了：这些 P2P 之后又变过。

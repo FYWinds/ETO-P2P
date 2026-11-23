@@ -1,0 +1,23 @@
+item.etop2p.card.name=P2P Manager Card
+
+etop2p.tooltip.armed=Input picked: %d, %d, %d
+etop2p.tooltip.network=Network: %d, %d, %d (dimension %d)
+etop2p.tooltip.use=Use on a network to list its P2P tunnels; on air to open the last one
+etop2p.tooltip.quick=Sneak-use on a tunnel to pick it as input, then use on others to bind them
+
+etop2p.quick.armed=Input picked at %s, %s, %s. Use the card on other tunnels to bind them as its outputs.
+etop2p.quick.bound=Bound the tunnel at %s, %s, %s as an output.
+etop2p.quick.failed=Could not bind: the picked input is not in this network, or this tunnel cannot take its type.
+etop2p.quick.cleared=Picked input cleared.
+
+etop2p.notice.denied=This network's security terminal does not give you build permission.
+etop2p.notice.no_network=The card has not been used on a network yet.
+etop2p.notice.unloaded=The network at %s, %s, %s is not loaded.
+etop2p.notice.gone=The network is gone.
+etop2p.notice.nothing=Nothing to do.
+etop2p.notice.done=Done: %s tunnels.
+etop2p.notice.partly=%s tunnels done, %s could not be changed.
+etop2p.notice.labelled=Labelled %s tunnels.
+etop2p.notice.tagged=Tagged %s connections.
+etop2p.notice.undone=Undone.
+etop2p.notice.undo_stale=Cannot undo: the tunnels have changed since.
