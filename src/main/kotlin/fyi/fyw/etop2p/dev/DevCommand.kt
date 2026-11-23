@@ -3,15 +3,22 @@ package fyi.fyw.etop2p.dev
 import appeng.api.AEApi
 import appeng.api.parts.IPartHost
 import appeng.api.util.AEColor
+import cpw.mods.fml.common.registry.GameRegistry
 import fyi.fyw.etop2p.data.Op
 import fyi.fyw.etop2p.data.P2PKey
 import fyi.fyw.etop2p.data.P2PTypes
+import fyi.fyw.etop2p.item.P2PCardItem
 import fyi.fyw.etop2p.server.Sessions
 import fyi.fyw.etop2p.server.Tunnels
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.command.WrongUsageException
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.inventory.Container
+import net.minecraft.inventory.InventoryCrafting
+import net.minecraft.item.ItemStack
+import net.minecraft.item.crafting.CraftingManager
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
 import net.minecraftforge.common.util.ForgeDirection
@@ -31,6 +38,8 @@ import net.minecraftforge.common.util.ForgeDirection
  *     etop2p_dev undo <player>
  *     etop2p_dev look <player> <yaw> <pitch>                    turns the player's head, to aim a click
  *     etop2p_dev sneak <player> <0|1>                           as the server sees it, until the client says otherwise
+ *     etop2p_dev may <player>                                   whether the open network lets the player build
+ *     etop2p_dev recipe <player>                                what the card and BetterP2P's card craft into, alone in a grid
  */
 object DevCommand : CommandBase() {
 
@@ -87,6 +96,15 @@ object DevCommand : CommandBase() {
                 player.posX, player.posY, player.posZ, args[2].toFloat(), args[3].toFloat(),
             )
             "sneak" -> player.isSneaking = args[2] == "1"
+            "may" -> say(Tunnels.mayBuild(Sessions.gridOf(player) ?: throw WrongUsageException("no screen open"), player).toString())
+            "recipe" -> listOfNotNull(P2PCardItem, GameRegistry.findItem("betterp2p", "advanced_memory_card")).forEach { item ->
+                val grid = InventoryCrafting(object : Container() {
+                    override fun canInteractWith(player: EntityPlayer) = true
+                }, 3, 3)
+                grid.setInventorySlotContents(0, ItemStack(item))
+                val made = CraftingManager.getInstance().findMatchingRecipe(grid, player.worldObj)
+                say("${item.unlocalizedName} -> ${made?.item?.unlocalizedName}")
+            }
             else -> throw WrongUsageException(getCommandUsage(sender))
         }
     }
